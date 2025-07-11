@@ -1,26 +1,112 @@
-@import "tailwindcss";
-
-:root {
+/* :root {
   --background: #ffffff;
   --foreground: #171717;
-}
+} */
 
-@theme inline {
+/* @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
+} */
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
-}
+} */
 
-body {
+/* body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+} */
+
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+li {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+:root {
+  --primary-card: #f9fafb;
+}
+
+.svg-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1rem;
+  width: 188px;
+  height: 147px;
+  padding-block: 1.5rem;
+  background-color: var(--primary-card);
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.main-btn {
+  font-size: 24px;
+  border: 1px solid lightgray;
+  margin: 20px;
+  padding: 10px 20px;
+  border-radius: 8px;
+}
+
+.download-png {
+  background-color: #f97316;
+  color: white;
+}
+
+.download-svg {
+  background-color: #0e8f2a;
+  color: white;
+}
+
+.modal-header {
+  border: none !important;
+}
+
+.btn-close {
+  background-color: red !important;
+  border-radius: 50% !important;
+}
+
+/* .download-container{
+
+} */
+
+.page-btn{
+  background-color: #f97316;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  width: 100px;
+  margin: 0 10px;
+}
+.svg-card svg {
+  width: 78px;
+  height: 78px;
+}
+
+.form-control-color{
+  width: 40px;
+}
+
+.svg-modal svg{
+  width: 100px;
+  height: 100px;
 }
