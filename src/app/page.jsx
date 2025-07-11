@@ -4,23 +4,28 @@ import { useEffect, useRef, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { getData, getSvg } from './API';
 import Link from 'next/link';
-
-
 export default function Home() {
   useEffect(() => {
     import('bootstrap/dist/js/bootstrap.bundle.min.js');
   }, []);
 
-  const [svgColor, setSvgColor] = useState('#f97316');
+  const [svgColor, setSvgColor] = useState('#665df5');
   const [svgList, setSvgList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedSVG, setSelectedSVG] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 20;
 
-  const totalPages = Math.ceil(svgList.length / itemsPerPage);
+  const searchSvg = svgList.filter((icon) =>
+    icon.name.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
+
+  const totalPages = Math.ceil(searchSvg.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const visibleSVGs = svgList.slice(startIndex, endIndex);
+  const visibleSVGs = searchSvg.slice(startIndex, endIndex);
 
   const svgRef = useRef(null);
 
@@ -69,8 +74,9 @@ export default function Home() {
   // ];
 
 
-
   const fetchSvgList = async () => {
+    setIsLoading(true);
+
     try {
       const res = await getData();
       const categories = res.data.categories;
@@ -79,22 +85,26 @@ export default function Home() {
 
       const svgPromises = limitedIcons.map(async (iconName) => {
         const res = await getSvg(iconName);
-        return { name: iconName, rawSvg: res.data }; // Save raw SVG
+        return { name: iconName, rawSvg: res.data };
       });
+
+      console.log("SVG Data Fetched: ", svgPromises);
+
+      console.log(res.data);
 
       const icons = await Promise.all(svgPromises);
       setSvgList(icons);
     } catch (error) {
       console.error('Error fetching SVG icons:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
+
 
   useEffect(() => {
     fetchSvgList();
   }, []);
-
-
-
 
   const applyColorToSvg = (svg, color, pathIndex = 0) => {
     const parser = new DOMParser();
@@ -139,7 +149,6 @@ export default function Home() {
 
     const img = new Image();
 
-    // Get exact size from viewBox
     const viewBox = svgElement.getAttribute('viewBox');
     let width = 300;
     let height = 300;
@@ -188,61 +197,79 @@ export default function Home() {
   };
 
 
+
+
+
+
+
   return (
     <>
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
-        <div className="container ">
-          <Link href="/" className="navbar-brand">unDraw</Link>
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0 d-flex justify-content-end align-items-center gap-2 ms-auto w-100">
+      {/* navbar */}
+      <header>
+        <nav className="navbar navbar-expand-lg navbar-light bg-light">
+          <div className="container ">
+            <Link href="/" className="navbar-brand">Logo</Link>
+            <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span className="navbar-toggler-icon"></span>
+            </button>
+            <div className="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul className="navbar-nav me-auto mb-2 mb-lg-0 d-flex justify-content-end align-items-center gap-2 ms-auto w-100">
 
-              <li>Search</li>
-              <li className="nav-item">
-                <input
-                  type="color"
-                  id="colorPicker"
-                  className="form-control form-control-color"
-                  value={svgColor}
-                  onChange={(e) => setSvgColor(e.target.value)}
-                  title="Choose your color"
-                />
-              </li>
-            </ul>
-
+                <li><input type="text" placeholder='Search' className='search-bar' value={searchQuery} onChange={(e) => {
+                  setSearchQuery(e.target.value)
+                  setCurrentPage(1)
+                }} /></li>
+                <li className="nav-item">
+                  <input
+                    type="color"
+                    id="colorPicker"
+                    className="form-control form-control-color"
+                    value={svgColor}
+                    onChange={(e) => setSvgColor(e.target.value)}
+                    title="Choose your color"
+                  />
+                </li>
+              </ul>
+            </div>
           </div>
-        </div>
-      </nav>
+        </nav>
+      </header>
+
       <main>
         <div className="container">
-
           <div className="row justify-content-center align-items-center gap-4">
-            {visibleSVGs.map((item, index) => (
-              <div
-                className="col-lg-2 col-md-3 col-sm-4 col-6 mb-4"
-                key={index}
-              >
+            {isLoading
+              ? Array.from({ length: 12 }).map((_, index) => (
                 <div
-                  className="svg-card text-center"
-                  data-bs-toggle="modal"
-                  href="#exampleModalToggle"
-                  role="button"
-                  onClick={() =>
-                    setSelectedSVG(applyColorToSvg(item.rawSvg, svgColor))
-                  }
+                  className="col-lg-2 col-md-3 col-sm-4 col-6 mb-4"
+                  key={index}
                 >
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: applyColorToSvg(item.rawSvg, svgColor),
-                    }}
-                  />
+                  <div className="svg-card placeholder-card" />
                 </div>
-              </div>
-            ))}
-          </div>
+              ))
+              : visibleSVGs.map((item, index) => (
+                <div
+                  className="col-lg-2 col-md-3 col-sm-4 col-6 mb-4"
+                  key={index}
+                >
+                  <div className="svg-card text-center" data-bs-toggle="modal" href="#exampleModalToggle" role="button" onClick={() =>
+                    setSelectedSVG(applyColorToSvg(item.rawSvg, item.iconName, svgColor))
+                  }
+                  >
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: applyColorToSvg(item.rawSvg, svgColor),
+                      }}
+                    />
 
+                    <p className='svg-card-text'>{item.name}</p>
+                    <div>
+
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </div>
         </div>
 
         {/* pagination  */}
@@ -253,7 +280,7 @@ export default function Home() {
         </div>
       </main>
 
-      {/* modal */}
+      {/* popup modal */}
       <div className="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabIndex="-1">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">

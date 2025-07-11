@@ -45,9 +45,6 @@ a {
 }
 
 .svg-card {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   margin-top: 1rem;
   width: 188px;
   height: 147px;
@@ -55,6 +52,12 @@ a {
   background-color: var(--primary-card);
   border-radius: 8px;
   border: 1px solid #e5e7eb;
+}
+
+
+.svg-card-text{
+  font-size: 14px;
+  margin-top: 10px;
 }
 
 .main-btn {
@@ -66,7 +69,7 @@ a {
 }
 
 .download-png {
-  background-color: #f97316;
+  background-color: #665df5;
   color: white;
 }
 
@@ -88,8 +91,8 @@ a {
 
 } */
 
-.page-btn{
-  background-color: #f97316;
+.page-btn {
+  background-color: #665df5;
   color: white;
   padding: 10px 20px;
   border-radius: 8px;
@@ -97,16 +100,50 @@ a {
   width: 100px;
   margin: 0 10px;
 }
+
 .svg-card svg {
   width: 78px;
   height: 78px;
 }
 
-.form-control-color{
+.form-control-color {
   width: 40px;
 }
 
-.svg-modal svg{
+.svg-modal svg {
   width: 100px;
   height: 100px;
+}
+
+.placeholder-card {
+  background-color: #f3f4f6;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  width: 188px;
+  height: 147px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse .3s infinite;
+}
+
+/* Optional pulse animation */
+@keyframes pulse {
+  0% {
+    background-color: #f3f4f6;
+  }
+
+  50% {
+    background-color: #e5e7eb;
+  }
+
+    100% {
+      background-color: #f3f4f6;
+    }
+}
+.search-bar{
+  border: 8px;
+  padding: 5px 20px;
+  border-radius: 8px;
+  border: 1px solid lightgray;
 }
